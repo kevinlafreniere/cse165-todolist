@@ -26,8 +26,8 @@
     <property name="toolTip">
      <string>Input a task!</string>
     </property>
-    <property name="text">
-     <string>Input text</string>
+    <property name="placeholderText">
+     <string>Type your task here...</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btnAdd">

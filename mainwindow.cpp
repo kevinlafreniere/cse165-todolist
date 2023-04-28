@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QMessageBox>
+#include <QCheckBox>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     // read the file for each list item, line by line
     while(!in.atEnd()){
         QListWidgetItem* item = new QListWidgetItem(in.readLine(), ui->listWidget);
+        item->setCheckState(Qt::Unchecked);
         ui->listWidget->addItem(item);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
     }
@@ -62,6 +64,7 @@ void MainWindow::on_btnAdd_clicked()
     }
 
     QListWidgetItem* item = new QListWidgetItem(ui->txtTask->text(), ui->listWidget);
+    item->setCheckState(Qt::Unchecked);
 
     ui->listWidget->addItem(item);
     item->setFlags(item->flags() | Qt::ItemIsEditable);
