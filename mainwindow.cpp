@@ -156,7 +156,9 @@ void MainWindow::on_btnChart_clicked()
 void MainWindow::on_comboBox_currentIndexChanged(int index)
 {
     if(index == 0){
-        QString current = ui->listWidget->currentItem()->text();
+        QString current;
+        if(ui->listWidget->currentItem() != nullptr)
+            current = ui->listWidget->currentItem()->text();
         ui->listWidget->clear();
         for (int var = 0; var < original->count(); ++var) {
             ui->listWidget->addItem(original->item(var)->clone());
