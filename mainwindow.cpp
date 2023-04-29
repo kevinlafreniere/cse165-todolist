@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QAction>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -83,5 +84,16 @@ void MainWindow::on_btnRemove_clicked()
 void MainWindow::on_btnRemoveAll_clicked()
 {
     ui->listWidget->clear();
+}
+
+
+void MainWindow::on_actionSort_toggled(bool arg1)
+{
+    if(arg1){
+        ui->listWidget->sortItems(Qt::AscendingOrder);
+    }
+    else{
+        ui->listWidget->sortItems(Qt::DescendingOrder);
+    }
 }
 

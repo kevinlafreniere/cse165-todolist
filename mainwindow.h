@@ -26,6 +26,8 @@ private slots:
 
     void on_btnRemoveAll_clicked();
 
+    void on_actionSort_toggled(bool arg1);
+
 private:
     Ui::MainWindow *ui;
 };
