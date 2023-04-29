@@ -44,6 +44,10 @@ endif()
 
 target_link_libraries(TodoList PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+
+find_package(Qt6 REQUIRED COMPONENTS Charts)
+target_link_libraries(TodoList PRIVATE Qt6::Charts)
+
 set_target_properties(TodoList PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

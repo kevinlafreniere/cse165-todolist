@@ -4,6 +4,11 @@
 
 #include <QMainWindow>
 
+#include <QtCharts/QtCharts>
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarSeries>
+
 
 
 QT_BEGIN_NAMESPACE
@@ -28,8 +33,15 @@ private slots:
 
     void on_actionSort_toggled(bool arg1);
 
+    void on_btnChart_clicked();
+
+    void on_comboBox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
+
+    QListWidget *original;
+    QWidget *chartWidget;
 };
 
 #endif // MAINWINDOW_H
