@@ -14,31 +14,35 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QBarSet *set0 = new QBarSet("Incomplete");
-    QBarSet *set1 = new QBarSet("Complete");
+    QBarSet *set0 = new QBarSet("User");
 
-    *set0 << 10;
-    *set1 << 5;
+    *set0 << 10 << 15;
 
-    QBarSeries *series = new QBarSeries();
+    series = new QBarSeries();
     series->append(set0);
-    series->append(set1);
 
-    QChart *chart = new QChart();
+    chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("BarChart test");
+    chart->setTitle("Your Todo List Progress");
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
     QStringList categories;
-    categories << "First" << "second";
-    QBarCategoryAxis *axis = new QBarCategoryAxis();
-    axis->append(categories);
-    chart->createDefaultAxes();
+    categories << "Incomplete" << "Complete";
+    axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignBottom);
 
-    QChartView *chartView = new QChartView(chart);
+    axisY = new QValueAxis();
+    axisY->setRange(0,15);
+    axisY->setTickCount(4);
+    axisY->setLabelFormat("%d");
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    chartView = new QChartView(chart);
     chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     chartWidget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout();
+    layout = new QVBoxLayout();
     layout->addWidget(chartView);
     chartWidget->setLayout(layout);
 
@@ -58,10 +62,18 @@ MainWindow::MainWindow(QWidget *parent)
     // read the file for each list item, line by line
     while(!in.atEnd()){
         QListWidgetItem* item = new QListWidgetItem(in.readLine(), ui->listWidget);
-        item->setCheckState(Qt::Unchecked);
+
+        if(in.readLine().contains("0")){
+            item->setCheckState(Qt::Unchecked);
+        }
+        else{
+            item->setCheckState(Qt::Checked);
+        }
+
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+
         ui->listWidget->addItem(item);
         original->addItem(item->clone());
-        item->setFlags(item->flags() | Qt::ItemIsEditable);
     }
 
     file.close();
@@ -81,8 +93,14 @@ MainWindow::~MainWindow()
     QTextStream out(&file);
 
     // save each list item in a new line
-    for (int i = 0; i < original->count(); ++i) {
-        out<<original->item(i)->text()<<"\n";
+    for (int i = 0; i < ui->listWidget->count(); ++i) {
+        out<<ui->listWidget->item(i)->text()<<"\n";
+        if(ui->listWidget->item(i)->checkState() == Qt::Unchecked){
+            out<<"0\n";
+        }
+        else{
+            out<<"1\n";
+        }
     }
 
     file.close();
@@ -101,14 +119,17 @@ void MainWindow::on_btnAdd_clicked()
     QListWidgetItem* item = new QListWidgetItem(ui->txtTask->text(), ui->listWidget);
     item->setCheckState(Qt::Unchecked);
 
-    ui->listWidget->addItem(item);
-    original->addItem(item->clone());
+
     item->setFlags(item->flags() | Qt::ItemIsEditable);
     item->isSelected();
     ui->txtTask->clear();
     ui->txtTask->setFocus();
 
-    MainWindow::on_comboBox_currentIndexChanged(ui->comboBox->currentIndex());
+    ui->listWidget->addItem(item);
+    original->addItem(item->clone());
+
+    if(ui->comboBox->currentIndex() != 0)
+        MainWindow::on_comboBox_currentIndexChanged(ui->comboBox->currentIndex());
     ui->listWidget->setCurrentItem(item);
 }
 
@@ -116,16 +137,22 @@ void MainWindow::on_btnAdd_clicked()
 void MainWindow::on_btnRemove_clicked()
 {
     QListWidgetItem* item = ui->listWidget->takeItem(ui->listWidget->currentRow());
-    delete item;
+
+    //TODO: delete item from original list
+    //original->removeItemWidget(item);
+    delete original->itemWidget(item);
+    //if(item->checkState() == Qt::Checked)
+        delete item;
 }
 
 
 void MainWindow::on_btnRemoveAll_clicked()
 {
     ui->listWidget->clear();
+    original->clear();
 }
 
-
+//UNUSED NOW
 void MainWindow::on_actionSort_toggled(bool arg1)
 {
     if(arg1){
@@ -143,6 +170,46 @@ void MainWindow::on_actionSort_toggled(bool arg1)
 void MainWindow::on_btnChart_clicked()
 {
     if(ui->stackedWidget->currentIndex() == 0){
+//        QBarSet *set0 = new QBarSet("Incomplete");
+//        QBarSet *set1 = new QBarSet("Complete");
+
+//        *set0 << 100;
+//        *set1 << 30;
+
+//        set0->
+
+//        series->clear();
+
+//        series->append(set0);
+//        series->append(set1);
+
+//        chart->removeAllSeries();
+//        chart->addSeries(series);
+//        chart->createDefaultAxes();
+        int checkedCount = 0;
+        int uncheckedCount = 0;
+        for (int var = 0; var < ui->listWidget->count(); ++var) {
+            if(ui->listWidget->item(var)->checkState() == Qt::Checked){
+                checkedCount++;
+            }
+            else{
+                uncheckedCount++;
+            }
+        }
+
+
+        if(checkedCount > uncheckedCount){
+            axisY->setRange(0,checkedCount);
+        }
+        else{
+            axisY->setRange(0,uncheckedCount);
+        }
+
+        QBarSet *set0 = new QBarSet("User");
+        *set0 << uncheckedCount << checkedCount;
+        series->clear();
+        series->append(set0);
+
         ui->stackedWidget->setCurrentWidget(chartWidget);
         ui->btnChart->setText("Return");
     }
@@ -159,6 +226,24 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
         QString current;
         if(ui->listWidget->currentItem() != nullptr)
             current = ui->listWidget->currentItem()->text();
+
+
+        for (int var = 0; var < original->count(); ++var) {
+            // Find the item by its text
+            QString targetText = original->item(var)->text();
+            QList<QListWidgetItem *> foundItems = ui->listWidget->findItems(targetText, Qt::MatchExactly);
+
+            // Change the check state of the first found item
+            if (!foundItems.isEmpty()) {
+                QListWidgetItem *item = foundItems.first();
+                if(item->checkState() == Qt::Unchecked){
+                    original->item(var)->setCheckState(Qt::Unchecked);
+                }
+                else{
+                    original->item(var)->setCheckState(Qt::Checked);
+                }
+            }
+        }
         ui->listWidget->clear();
         for (int var = 0; var < original->count(); ++var) {
             ui->listWidget->addItem(original->item(var)->clone());
@@ -174,4 +259,3 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
         ui->listWidget->sortItems(Qt::DescendingOrder);
     }
 }
-

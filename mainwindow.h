@@ -42,6 +42,12 @@ private:
 
     QListWidget *original;
     QWidget *chartWidget;
+    QBarSeries *series;
+    QChart *chart;
+    QBarCategoryAxis *axisX;
+    QValueAxis *axisY;
+    QChartView *chartView;
+    QVBoxLayout *layout;
 };
 
 #endif // MAINWINDOW_H
