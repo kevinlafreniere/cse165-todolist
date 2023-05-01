@@ -62,41 +62,34 @@ public:
         getSeries()->append(set);
     }
 
-    // Getters and Setters
+    // Getters
     QWidget *getChartWidget(){
         return chartWidget;
     };
-    void getChartWidget(QBarSeries *value);
 
     QBarSeries *getSeries(){
         return series;
     };
-    void setSeries(QBarSeries *value);
 
     QChart *getChart(){
         return chart;
     };
-    void setChart(QChart *value);
 
     QBarCategoryAxis *getAxisX(){
         return axisX;
     };
-    void setAxisX(QBarCategoryAxis *value);
 
     QValueAxis *getAxisY(){
         return axisY;
     };
-    void setAxisY(QValueAxis *value);
 
     QChartView *getChartView(){
         return chartView;
     };
-    void setChartView(QChartView *value);
 
     QVBoxLayout *getLayout(){
         return layout;
     };
-    //void setLayout(QVBoxLayout *value);
 
 private:
          // add any private members or functions here
