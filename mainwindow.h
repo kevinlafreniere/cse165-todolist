@@ -2,6 +2,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "CustomChart.h"
 #include <QMainWindow>
 
 #include <QtCharts/QtCharts>
@@ -41,13 +42,8 @@ private:
     Ui::MainWindow *ui;
 
     QListWidget *original;
-    QWidget *chartWidget;
-    QBarSeries *series;
-    QChart *chart;
-    QBarCategoryAxis *axisX;
-    QValueAxis *axisY;
-    QChartView *chartView;
-    QVBoxLayout *layout;
+
+    CustomChart *customChart;
 };
 
 #endif // MAINWINDOW_H

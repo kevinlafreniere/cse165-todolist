@@ -14,41 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QBarSet *set0 = new QBarSet("User");
-
-    *set0 << 10 << 15;
-
-    series = new QBarSeries();
-    series->append(set0);
-
-    chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Your Todo List Progress");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-
-    QStringList categories;
-    categories << "Incomplete" << "Complete";
-    axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignBottom);
-
-    axisY = new QValueAxis();
-    axisY->setRange(0,15);
-    axisY->setTickCount(4);
-    axisY->setLabelFormat("%d");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-
-    chartView = new QChartView(chart);
-    chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    chartWidget = new QWidget();
-    layout = new QVBoxLayout();
-    layout->addWidget(chartView);
-    chartWidget->setLayout(layout);
+    customChart = new CustomChart();
 
     // Add the chart widget to the stacked widget
-    ui->stackedWidget->addWidget(chartWidget);
-    //ui->stackedWidget->setCurrentWidget(chartWidget);
+    ui->stackedWidget->addWidget(customChart->getChartWidget());
+    //ui->stackedWidget->setCurrentWidget(customChart->getChartWidget());
 
     QFile file(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "\\toDoFile.txt");
 
@@ -170,22 +140,6 @@ void MainWindow::on_actionSort_toggled(bool arg1)
 void MainWindow::on_btnChart_clicked()
 {
     if(ui->stackedWidget->currentIndex() == 0){
-//        QBarSet *set0 = new QBarSet("Incomplete");
-//        QBarSet *set1 = new QBarSet("Complete");
-
-//        *set0 << 100;
-//        *set1 << 30;
-
-//        set0->
-
-//        series->clear();
-
-//        series->append(set0);
-//        series->append(set1);
-
-//        chart->removeAllSeries();
-//        chart->addSeries(series);
-//        chart->createDefaultAxes();
         int checkedCount = 0;
         int uncheckedCount = 0;
         for (int var = 0; var < ui->listWidget->count(); ++var) {
@@ -199,18 +153,15 @@ void MainWindow::on_btnChart_clicked()
 
 
         if(checkedCount > uncheckedCount){
-            axisY->setRange(0,checkedCount);
+            customChart->getAxisY()->setRange(0, checkedCount);
         }
         else{
-            axisY->setRange(0,uncheckedCount);
+            customChart->getAxisY()->setRange(0, uncheckedCount);
         }
 
-        QBarSet *set0 = new QBarSet("User");
-        *set0 << uncheckedCount << checkedCount;
-        series->clear();
-        series->append(set0);
+        customChart->updateChart(uncheckedCount, checkedCount);
 
-        ui->stackedWidget->setCurrentWidget(chartWidget);
+        ui->stackedWidget->setCurrentWidget(customChart->getChartWidget());
         ui->btnChart->setText("Return");
     }
     else{
