@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Add the chart widget to the stacked widget
     ui->stackedWidget->addWidget(customChart->getChartWidget());
-    //ui->stackedWidget->setCurrentWidget(customChart->getChartWidget());
 
     QFile file(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "\\toDoFile.txt");
 
@@ -108,11 +107,8 @@ void MainWindow::on_btnRemove_clicked()
 {
     QListWidgetItem* item = ui->listWidget->takeItem(ui->listWidget->currentRow());
 
-    //TODO: delete item from original list
-    //original->removeItemWidget(item);
     delete original->itemWidget(item);
-    //if(item->checkState() == Qt::Checked)
-        delete item;
+    delete item;
 }
 
 
@@ -120,20 +116,6 @@ void MainWindow::on_btnRemoveAll_clicked()
 {
     ui->listWidget->clear();
     original->clear();
-}
-
-//UNUSED NOW
-void MainWindow::on_actionSort_toggled(bool arg1)
-{
-    if(arg1){
-        ui->listWidget->sortItems(Qt::AscendingOrder);
-    }
-    else{
-        ui->listWidget->clear();
-        for (int var = 0; var < original->count(); ++var) {
-            ui->listWidget->addItem(original->item(var)->clone());
-        }
-    }
 }
 
 

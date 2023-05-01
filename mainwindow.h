@@ -32,8 +32,6 @@ private slots:
 
     void on_btnRemoveAll_clicked();
 
-    void on_actionSort_toggled(bool arg1);
-
     void on_btnChart_clicked();
 
     void on_comboBox_currentIndexChanged(int index);
